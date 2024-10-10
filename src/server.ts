@@ -40,12 +40,12 @@ export class Server {
                 Log.success(`Running at ${host} on port ${this.getPort()}`);
 
                 if(this.options.database == "redis")
-                    {
-                      var pubClient = new Redis(this.options.databaseConfig.redis);
-                      var subClient = new Redis(this.options.databaseConfig.redis);
-    
-                      this.io.adapter(adapter({ key:'adapter', pubClient: pubClient , subClient: subClient }));
-                    }
+                {
+                    var pubClient = new Redis(this.options.databaseConfig.redis);
+                    var subClient = new Redis(this.options.databaseConfig.redis);
+
+                    this.io.adapter(adapter({ key:'adapter', pubClient: pubClient , subClient: subClient }));
+                }
                 resolve(this.io);
             }, error => reject(error));
         });
