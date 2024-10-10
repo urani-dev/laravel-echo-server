@@ -4,11 +4,7 @@
   "description": "Laravel Echo Node JS Server for Socket.io",
   "repository": {
     "type": "git",
-<<<<<<< HEAD
     "url": "https://github.com/tlaverdure/Laravel-Echo-Server.git"
-=======
-    "url": "https://github.com/urani-dev/laravel-echo-server"
->>>>>>> 83a5a89 (Init package)
   },
   "main": "dist/index.js",
   "keywords": [
@@ -34,7 +30,7 @@
     "lodash": "^4.17.15",
     "request": "^2.88.2",
     "socket.io": "^2.3.0",
-    "socket.io-redis": "^6.1.1",
+    "socket.io-redis": "^5.2.0",
     "yargs": "^15.3.1"
   },
   "devDependencies": {
