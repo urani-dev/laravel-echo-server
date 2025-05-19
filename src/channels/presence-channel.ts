@@ -59,7 +59,7 @@ export class PresenceChannel {
                 .clients((error, clients) => {
                     members = members || [];
                     members = members.filter((member) => {
-                        return clients.indexOf(member.socketId) >= 0;
+                        return member && clients.indexOf(member.socketId) >= 0;
                     });
 
                     this.db.set(channel + ":members", members);
@@ -122,7 +122,7 @@ export class PresenceChannel {
                 let member = members.find(
                     (member) => member.socketId == socket.id
                 );
-                members = members.filter((m) => m.socketId != member.socketId);
+                members = members.filter((m) => m && member && m.socketId != member.socketId);
 
                 this.db.set(channel + ":members", members);
 
@@ -141,9 +141,12 @@ export class PresenceChannel {
      * On join event handler.
      */
     onJoin(socket: any, channel: string, member: any): void {
-        this.io.sockets.connected[socket.id].broadcast
-            .to(channel)
-            .emit("presence:joining", channel, member);
+        const targetSocket = this.io.sockets.connected[socket.id];
+        if (targetSocket) {
+            targetSocket.broadcast.to(channel).emit("presence:joining", channel, member);
+        } else {
+            Log.error("Ignored socket not found for ID:", socket.id);
+        }
     }
 
     /**
