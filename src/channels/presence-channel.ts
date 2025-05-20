@@ -145,7 +145,7 @@ export class PresenceChannel {
         if (targetSocket) {
             targetSocket.broadcast.to(channel).emit("presence:joining", channel, member);
         } else {
-            Log.error("Ignored socket not found for ID:", socket.id);
+            Log.error("Ignored socket not found");
         }
     }
 
