@@ -27,6 +27,10 @@ export class PresenceChannel {
      */
     isMember(channel: string, member: any): Promise<boolean> {
         return new Promise((resolve, reject) => {
+            if (!member || typeof member === 'undefined') {
+                resolve(false);
+                return;
+            }
             this.getMembers(channel).then(
                 (members) => {
                     this.removeInactive(channel, members, member).then(
@@ -128,7 +132,11 @@ export class PresenceChannel {
 
                 this.isMember(channel, member).then((is_member) => {
                     if (!is_member) {
-                        delete member.socketId;
+                        try {
+                            delete member.socketId;
+                        } catch (e) {
+                            Log.error(`Error deleting socketId: ${e}, Member: ${member}`);
+                        }
                         this.onLeave(channel, member);
                     }
                 });
