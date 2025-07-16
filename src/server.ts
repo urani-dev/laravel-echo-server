@@ -4,8 +4,6 @@ var https = require('https');
 var express = require('express');
 var url = require('url');
 var io = require('socket.io');
-var adapter = require('socket.io-redis');
-var Redis = require('ioredis');
 import { Log } from './log';
 
 export class Server {
