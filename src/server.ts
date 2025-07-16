@@ -26,7 +26,7 @@ export class Server {
     /**
      * Create a new server instance.
      */
-    constructor(private options) { }
+    constructor(private options: any) { }
 
     /**
      * Start the Socket.io server.
@@ -39,13 +39,6 @@ export class Server {
                 let host = this.options.host || 'localhost';
                 Log.success(`Running at ${host} on port ${this.getPort()}`);
 
-                if(this.options.database == "redis")
-                {
-                    var pubClient = new Redis(this.options.databaseConfig.redis);
-                    var subClient = new Redis(this.options.databaseConfig.redis);
-
-                    this.io.adapter(adapter({ key:'adapter', pubClient: pubClient , subClient: subClient }));
-                }
                 resolve(this.io);
             }, error => reject(error));
         });
@@ -108,31 +101,43 @@ export class Server {
      */
     httpServer(secure: boolean) {
         this.express = express();
-        this.express.use((req, res, next) => {
-            for (var header in this.options.headers) {
+        this.express.use((req: any, res: any, next: any) => {
+            for (const header in this.options.headers) {
                 res.setHeader(header, this.options.headers[header]);
             }
             next();
         });
 
-        if (secure) {
-            var httpServer = https.createServer(this.options, this.express);
-        } else {
-            var httpServer = http.createServer(this.express);
-        }
+        // Declare httpServer once, assign based on protocol
+        const httpServer = secure
+            ? https.createServer(this.options, this.express)
+            : http.createServer(this.express);
+
+        // Log all HTTP server errors
+        httpServer.on('error', (err: any) => {
+            Log.error('HTTP Server Error:');
+            Log.error(err);
+        });
 
         httpServer.listen(this.getPort(), this.options.host);
 
         this.authorizeRequests();
 
-        return this.io = io(httpServer, this.options.socketio);
+        const socketServer = io(httpServer, this.options.socketio);
+        // Log all Socket.io errors
+        socketServer.on('error', (err: any) => {
+            Log.error('Socket.io Error:');
+            Log.error(err);
+        });
+
+        return this.io = socketServer;
     }
 
     /**
      * Attach global protection to HTTP routes, to verify the API key.
      */
     authorizeRequests(): void {
-        this.express.param('appId', (req, res, next) => {
+        this.express.param('appId', (req: any, res: any, next: any) => {
             if (!this.canAccess(req)) {
                 return this.unauthorizedResponse(req, res);
             }
