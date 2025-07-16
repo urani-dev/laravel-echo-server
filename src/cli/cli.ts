@@ -24,6 +24,11 @@ export class Cli {
     defaultOptions: any;
 
     /**
+     * Flag to prevent multiple starts.
+     */
+    isStarting: boolean = false;
+
+    /**
      * Allowed environment variables.
      */
     envVariables: any = {
@@ -272,7 +277,12 @@ export class Cli {
                 describe: "Run in dev mode."
             }
         });
-
+        // Avoid multiple starts by using a singleton flag
+        if (this.isStarting) {
+            console.warn(colors.yellow("Warning: Server start already in progress."));
+            return void 0;
+        }
+        this.isStarting = true;
         const configFile = this.getConfigFile(
             yargs.argv.config,
             yargs.argv.dir
