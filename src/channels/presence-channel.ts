@@ -148,14 +148,14 @@ export class PresenceChannel {
      * On join event handler.
      */
     onJoin(socket: any, channel: string, member: any): void {
-        socket.to(channel).emit("presence:joining", channel, member);
+        socket.to(channel).emit("presence:joining", channel, member, Date.now());
     }
 
     /**
      * On leave emitter.
      */
     onLeave(socket: any, channel: string, member: any): void {
-        socket.to(channel).emit("presence:leaving", channel, member);
+        socket.to(channel).emit("presence:leaving", channel, member, Date.now());
     }
 
     /**
